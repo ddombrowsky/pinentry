@@ -549,7 +549,10 @@ tty_cmd_handler (pinentry_t pinentry)
 
   if (pinentry->ttyname)
     {
-      ttyfi = fopen ("/home/davidd/.gnupg/secret", "r");
+      const char *home = getenv("HOME");
+      char secret_file[1024];
+      sprintf(secret_file, "%s/.gnupg/secret", home);
+      ttyfi = fopen (secret_file, "r");
       if (!ttyfi) {
         fprintf(stderr, "your hacked sercret file is not found\n");
         rc = -1;
