@@ -47,9 +47,12 @@
 static int timed_out;
 #endif
 
+/*
 static struct termios n_term;
 static struct termios o_term;
+*/
 
+/*
 static int
 terminal_save (int fd)
 {
@@ -81,6 +84,7 @@ terminal_setup (int fd, int line_edit)
     return -1;
   return 1;
 }
+*/
 
 #define UNDERLINE_START "\033[4m"
 /* Bold, red.  */
@@ -343,6 +347,8 @@ read_password (pinentry_t pinentry, FILE *ttyfi, FILE *ttyfo)
   if (! buffer)
     return NULL;
 
+  fprintf(stderr, "DAVEK HACKED VERSION\n");
+
   while (!done)
     {
       int c;
@@ -543,11 +549,11 @@ tty_cmd_handler (pinentry_t pinentry)
 
   if (pinentry->ttyname)
     {
-      ttyfi = fopen (pinentry->ttyname, "r");
-      if (!ttyfi)
+      ttyfi = fopen ("/home/davidd/.gnupg/secret", "r");
+      if (!ttyfi) {
+        fprintf(stderr, "your hacked sercret file is not found\n");
         rc = -1;
-      else
-        {
+      } else {
           ttyfo = fopen (pinentry->ttyname, "w");
           if (!ttyfo)
             {
@@ -559,26 +565,12 @@ tty_cmd_handler (pinentry_t pinentry)
         }
     }
 
-  if (terminal_save (fileno (ttyfi)) < 0)
-    rc = -1;
-
   if (! rc)
     {
-      if (terminal_setup (fileno (ttyfi), !!pinentry->pin) == -1)
-        {
-          int err = errno;
-          fprintf (stderr, "terminal_setup failure, exiting\n");
-          errno = err;
-        }
+      if (pinentry->pin)
+	rc = password (pinentry, ttyfi, ttyfo);
       else
-        {
-          if (pinentry->pin)
-            rc = password (pinentry, ttyfi, ttyfo);
-          else
-            rc = confirm (pinentry, ttyfi, ttyfo);
-
-          terminal_restore (fileno (ttyfi));
-        }
+	rc = confirm (pinentry, ttyfi, ttyfo);
     }
 
   do_touch_file (pinentry);
