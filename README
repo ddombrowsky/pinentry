@@ -1,6 +1,13 @@
 PINEntry
 ---------
 
+NOTE: this is a version HACKED by David Dombrowsky.  It adds code
+to `pinentry-tty` which reads the password from a known file location.
+This is a work-around, because there's something wrong with
+tty password input when running in cygwin (CYGWIN_NT-10.0).
+This certainly should not be used on multi-user production systems.
+
+
 This is a collection of PIN or passphrase entry dialogs which
 utilize the Assuan protocol as specified in the Libassuan manual.
 
